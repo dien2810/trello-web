@@ -16,6 +16,7 @@ import Badge from '@mui/material/Badge'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
 
 function AppBar() {
   return (
@@ -46,7 +47,7 @@ function AppBar() {
           <Starred/>
           <Templates/>
         </Box>
-        <Button variant="outlined">Create</Button>
+        <Button variant="outlined" startIcon={<LibraryAddIcon/>}>Create</Button>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <TextField id="outlined-search" label="Search..." type="search" size="small" sx={{ minWidth: '120px'}}/>
