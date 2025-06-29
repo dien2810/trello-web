@@ -32,7 +32,7 @@ function Profiles() {
           aria-expanded={open ? 'true' : undefined}
         >
           <Avatar
-            sx={{ width: 34, height: 34 }}
+            sx={{ width: 36, height: 36 }}
             alt='Loading...'
             src='https://res.cloudinary.com/dv0ehr5z7/image/upload/v1747729269/kindergarten/student/photos/xyixcphyenjkqljpbljg.jpg'
           />
