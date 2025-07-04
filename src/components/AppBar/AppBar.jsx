@@ -1,7 +1,7 @@
 // App Bar
 import { useState } from 'react'
 import Box from '@mui/material/Box'
-import ModeSelect from '~/components/ModeSelect'
+import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
 import Typography from '@mui/material/Typography'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
@@ -116,13 +116,13 @@ function AppBar() {
           }}
         />
         <ModeSelect/>
-        <Tooltip title="Notificatiion" sx={{ cursor: 'pointer' }}>
+        <Tooltip title="Notification" sx={{ cursor: 'pointer' }}>
           <Badge color="warning" variant="dot">
-            <NotificationsNoneIcon sx={{ color: 'white'}}/>
+            <NotificationsNoneIcon sx={{ color: 'white' }}/>
           </Badge>
         </Tooltip>
         <Tooltip title="Help" sx={{ cursor: 'pointer' }}>
-          <HelpOutlineIcon sx={{ color: 'white'}}></HelpOutlineIcon>
+          <HelpOutlineIcon sx={{ color: 'white' }}></HelpOutlineIcon>
         </Tooltip>
         <Profiles/>
       </Box>
