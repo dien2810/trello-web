@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
 import { mapOrder } from '~/utils/sorts'
 import { DndContext,
-  PointerSensor,
+  // PointerSensor,
   useSensor,
   useSensors,
   MouseSensor,
@@ -11,9 +11,9 @@ import { DndContext,
   defaultDropAnimationSideEffects,
   closestCorners,
   pointerWithin,
-  rectIntersection,
+  // rectIntersection,
   getFirstCollision,
-  closestCenter
+  // closestCenter
 } from '@dnd-kit/core'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -98,7 +98,7 @@ function BoardContent({ board }) {
 
   // Trigger khi bat dau keo
   const handleDragStart = (event) => {
-    console.log('handleDragStart', event)
+    // console.log('handleDragStart', event)
     setActiveDragItemId(event?.active.id)
     setActiveDragItemType(event?.active.data?.current?.columnId ? ACTIVE_DRAG_ITEM_TYPE.CARD : ACTIVE_DRAG_ITEM_TYPE.COLUMN)
     setActiveDragItemData(event?.active.data?.current)
@@ -111,7 +111,7 @@ function BoardContent({ board }) {
 
   // Trigger trong quá trình kéo một phần tử
   const handleDragOver = (event) => {
-    console.log('handleDragOver', event)
+    // console.log('handleDragOver', event)
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) return
     const { active, over } = event
     if (!active || !over) return
@@ -135,7 +135,7 @@ function BoardContent({ board }) {
 
   // Trigger khi ket thuc keo
   const handleDragEnd = (event) => {
-    console.log('handleDragEnd', event)
+    // console.log('handleDragEnd', event)
     const { active, over } = event
     if (!active || !over) return // Trường hợp kéo thả ra ngoài vùng hợp lệ
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
@@ -194,29 +194,32 @@ function BoardContent({ board }) {
   }
 
   const collisionDetectionStrategy = useCallback((args) => {
-    console.log('collisionDetectionStrategy')
+    // console.log('collisionDetectionStrategy')
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
       return closestCorners({ ...args })
     }
-    console.log(args)
+    // console.log(args)
     // Tìm các điểm giao nhau, va chạm - Intersections với con trỏ
     const pointerIntersections = pointerWithin(args)
-    const intersections = pointerIntersections.length ? pointerIntersections : rectIntersection(args)
+    if (!pointerIntersections?.length) {
+      return
+    }
+    // const intersections = pointerIntersections.length ? pointerIntersections : rectIntersection(args) // Doan nay khong can nua vi khi length==0 thi se khong lam gi
 
     // Tìm overId đầu tiên trong đám intersections ở trên
-    let overId = getFirstCollision(intersections, 'id')
+    let overId = getFirstCollision(pointerIntersections, 'id')
     if (overId) {
       // Đầu tiên, nếu overId là column thì sẽ trả về cardId gần nhất bên trong khu vực va chạm đó dựa vào thuật toán phát hiện
-      // va chạm closestCenter hoặc closestCorners đều được. Tuy nhiên closestCenter mượt mà hơn
+      // va chạm closestCenter hoặc closestCorners đều được.
       const checkColumn = orderedColumns.find(column => column._id === overId)
       if (checkColumn) {
-        console.log('overId before', overId)
-        overId = closestCenter({
+        // console.log('overId before', overId)
+        overId = closestCorners({
           ...args,
           droppableContainers: args.droppableContainers.filter(container =>
             container.id !== overId && checkColumn?.cardOrderIds?.includes(container.id))
         })[0]?.id
-        console.log('overId after', overId)
+        // console.log('overId after', overId)
       }
 
       lastOverId.current = overId
