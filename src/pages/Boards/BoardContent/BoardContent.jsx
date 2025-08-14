@@ -12,14 +12,15 @@ import { DndContext,
   closestCorners,
   pointerWithin,
   // rectIntersection,
-  getFirstCollision,
+  getFirstCollision
   // closestCenter
 } from '@dnd-kit/core'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
+import { generatePlaceholderCard } from '~/utils/formaters'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -74,8 +75,13 @@ function BoardContent({ board }) {
       const nextOverColumn = nextColumns.find(column => column._id === overColumn._id)
 
       if (nextActiveColumn) {
+        console.log('nextActiveColumn')
         // Xóa card đang kéo ra khỏi column hiện tại
         nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+        // Vid 37.2: Thêm placeholder card nếu column rỗng: Bị kéo hết card đi, không còn cái nào nữa
+        if (isEmpty(nextActiveColumn.cards)) {
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
+        }
         // Cập nhật lại mảng cardOrderIds cho chuẩn dữ liệu
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
       }
@@ -89,9 +95,12 @@ function BoardContent({ board }) {
         }
         // Cập nhật lại cards trong overColumn
         nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, rebuild_activeDraggingCardData)
+        // Vid 37.2: Xóa placeholdercard nếu có
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
         // Cập nhật lại mảng cardOverIds cho chuẩn dữ liệu
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
       }
+      console.log('nextCOlumns', nextColumns)
       return nextColumns
     })
   }
@@ -121,6 +130,7 @@ function BoardContent({ board }) {
     const overColumn = findColumnByCardId(overCardId)
     if (!activeColumn || !overColumn) return
     if (activeColumn._id !== overColumn._id) {
+      console.log('moveCardBetweenDifferentColumn handleDragOver')
       moveCardBetweenDifferentColumn(overColumn,
         overCardId,
         active,
@@ -145,6 +155,7 @@ function BoardContent({ board }) {
       const overColumn = findColumnByCardId(overCardId)
       if (!activeColumn || !overColumn) return
       if (oldColumnWhenDraggingCard._id !== overColumn._id) {
+        console.log('moveCardBetweenDifferentColumn handleDraEnd')
         moveCardBetweenDifferentColumn(overColumn,
           overCardId,
           active,
@@ -156,7 +167,7 @@ function BoardContent({ board }) {
       }
       else {
         const oldCardIndex = oldColumnWhenDraggingCard?.cards.findIndex((c) => c._id === activeDragItemId)
-        const newCardIndex = overColumn?.card.findIndex((c) => c._id === over.id)
+        const newCardIndex = overColumn?.cards.findIndex((c) => c._id === over.id)
         const dndOrderedCards = arrayMove(oldColumnWhenDraggingCard?.cards, oldCardIndex, newCardIndex)
         setOrderedColumns(prevColumns => {
           const nextColumns = cloneDeep(prevColumns)
