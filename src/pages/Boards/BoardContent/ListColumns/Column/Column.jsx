@@ -10,6 +10,7 @@ import ContentPaste from '@mui/icons-material/ContentPaste'
 import Cloud from '@mui/icons-material/Cloud'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import Tooltip from '@mui/material/Tooltip'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddCardIcon from '@mui/icons-material/AddCard'
@@ -47,7 +48,10 @@ function Column({ column }) {
 
   const addNewCard = () => {
     if (!newCardTitle) {
-      // console.error('Please enter new Card title')
+      toast.error('Please enter new Card title', {
+        position: 'bottom-left',
+        theme: 'colored'
+      })
       return
     }
     // Gọi API ở đây...
